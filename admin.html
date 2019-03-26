@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Admin - Medium Augustus FCM web push demo code</title>
+    <link rel="canonical" href="https://medium.com/@augustus0818/firebase-cloud-messaging-web-push-8ebf09e6b15b">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  </head>
+  <body>
+    <div id="app">
+      <form>
+        <div>
+          <label for="title">標題</label>
+          <input id="title" type="text" v-model="form.title">
+        </div>
+        <div>
+          <label for="description">內文</label>
+          <input id="description" type="text" v-model="form.body">
+        </div>
+        <div>
+          <label for="link">連結</label>
+          <input id="link" type="text" v-model="form.url">
+        </div>
+        <div>
+          <label for="utm_source">utm_source</label>
+          <input id="utm_source" type="text" v-model="form.utmS">
+        </div>
+        <div>
+          <label for="utm_medium">utm_medium</label>
+          <input id="utm_medium" type="text" v-model="form.utmM">
+        </div>
+        <div>
+          <label for="utm_campaign">utm_campaign</label>
+          <input id="utm_campaign" type="text" v-model="form.utmC">
+        </div>
+        <button type="button" @click.prevent="push">發送</button>
+      </form>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.5.19/vue.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/5.7.0/firebase.js"></script>
+    <script>
+      var config = {
+        apiKey: '',
+        authDomain: 'xxxxx.firebaseapp.com',
+        databaseURL: 'https://xxxxx.firebaseio.com',
+        projectId: 'xxxxx',
+        storageBucket: 'xxxxx.appspot.com',
+        messagingSenderId: 'xxxxxxx'
+      };
+      firebase.initializeApp(config);
+      var db = firebase.database();
+      var messaging = firebase.messaging();
+      messaging.usePublicVapidKey('從firebase上取得的FCM金鑰');
+      
+      var pushMsg = new Vue({
+        el: '#app',
+        data: {
+          tokens: [],
+          key: '從firebase上取得伺服器金鑰',
+          form: {
+            title: 'web push標題',
+            body: 'web push內文',
+            url: 'https://www.domain.com.tw',
+            utmS: 'webpush',
+            utmM: 'webpush',
+            utmC: 'webpush'
+          }
+        },
+        methods: {
+          // web push
+          push: function() {
+            var notification = {
+              'title': this.form.title,
+              'body': this.form.body,
+              'badge': '/logo/logo192.png',
+              'icon': '/logo/logo192.png',
+              'click_action': this.url(),
+              'data': {
+                'url': this.url()
+              }
+            };
+            
+            // 發送內容存至firebase
+            var d = new Date();
+            var y = d.getFullYear(),
+                m = d.getMonth() + 1,
+                day = d.getDate(),
+                hour = d.getHours(),
+                min = d.getMinutes();
+            
+            var time = y + '-' + m + '-' + day + '--' + hour + ':' + min;
+            db.ref('pushMessages/' + time).set(notification);
+            
+            // push
+            var _this = this;
+            this.tokens.forEach(function(to) {
+              fetch('https://fcm.googleapis.com/fcm/send', {
+                'method': 'POST',
+                'headers': {
+                  'Authorization': 'key=' + _this.key,
+                  'Content-Type': 'application/json'
+                },
+                'body': JSON.stringify({
+                  'data': notification,
+                  'to': to,
+                })
+              }).then(function(response) {
+                console.log(response);
+              }).catch(function(error) {
+                alert(error);
+              });
+            });
+          }
+        },
+        mounted: function() {
+          // 抓所有firebase裡的token
+          db.ref('/pushUsers/').once('value').then(snapshot => {
+            var lists = snapshot.val();
+            var t = [];
+            Object.keys(lists).map((key, index) => {
+              var value = lists[key];
+              this.tokens.push(value.token);
+            });
+          });
+        },
+      });
+    </script>
+  </body>
+</html>

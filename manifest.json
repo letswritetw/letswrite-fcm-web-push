@@ -1,0 +1,17 @@
+{
+  "short_name": "Augustus推播",
+  "name": "Medium Augustus web push",
+  "icons": [
+    {
+      "src": "./logo192.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    }
+  ],
+  "start_url": "/?utm_source=pwa",
+  "background_color": "#ffffff",
+  "display": "standalone",
+  "scope": "/",
+  "theme_color": "#000000",
+  "gcm_sender_id": "103953800507"
+}
