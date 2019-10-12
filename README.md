@@ -1,1 +1,1 @@
-教學文：[PWA學習筆記-4：用firebase做web push](https://letswrite.tw/pwa-manifest/)
+教學文：[PWA學習筆記-5：用firebase做web push](https://letswrite.tw/pwa-web-push/)
