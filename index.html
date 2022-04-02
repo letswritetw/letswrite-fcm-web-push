@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Medium Augustus FCM web push demo code - Augustus - Let's Write</title>
-    <link rel="canonical" href="https://letswrite.tw/pwa-web-push/">
+    <title>August FCM web push demo code - August - Let's Write</title>
+    <link rel="canonical" href="https://www.letswrite.tw/pwa-web-push/">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
@@ -59,7 +59,7 @@
         messaging.requestPermission().then(function() {
       
           // 先判斷cookies有沒有token，沒有再取token
-          var ckv = document.cookie.replace(/(?:(?:^|.*;\\s*)augustusWsPush\s*\=\s*([^;]*).*$)|^.*$/, "$1") || null;
+          var ckv = document.cookie.replace(/(?:(?:^|.*;\\s*)augustWsPush\s*\=\s*([^;]*).*$)|^.*$/, "$1") || null;
       
           // cookies不存在，跟使用者要求通知權限
           if(ckv === null) {
@@ -71,7 +71,7 @@
               firebase.database().ref('pushUsers/' + id).set({'token': currentToken});
       
               // token存至cookies
-              document.cookie = "augustusWsPush=" + currentToken;
+              document.cookie = "augustWsPush=" + currentToken;
 
             });
           }
